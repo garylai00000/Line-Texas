@@ -96,7 +96,7 @@ func callToken1(mID string, text string,S int) bool{
 	db.QueryRow("SELECT Turn FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&tN)
 	var money int = 5//money 小盲柱
 	var P int//輸入者的身分
-	db.QueryRow("SELECT PlayerX FROME sql6131889.GameAction WHERE MID AND Cancel = ??",mID, 0).Scan(&P)
+	db.QueryRow("SELECT PlayerX FROME sql6131889.GameAction WHERE MID AND Cancel = ?",mID, 0).Scan(&P)
 	//row,_ := db.Query("SELECT MID FROM sql6131889.GameAction WHERE GameID = ?", gID)
 	var mT int//最高投注金額
 	db.QueryRow("SELECT MaxToken FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&mT)
