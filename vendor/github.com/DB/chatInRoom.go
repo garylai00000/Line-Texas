@@ -264,9 +264,11 @@ func runFold(mID string,text string,gID int,mT int,nextS int){
 		for row.Next() {
 			var mid1 string
 			row.Scan(&mid1)
-			if mid1 != mID{
-				bot.SendText([]string{mid1}, n+" WIN")
-			}
+				if md == mid1{
+					bot.SendText([]string{mid1}, "YOU WIN")
+				}else{
+					bot.SendText([]string{mid1}, n+" WIN")
+				}
 		}
 	}else{
 		var pN int//遊戲人數
