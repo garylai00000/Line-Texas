@@ -149,11 +149,6 @@ func InRoomStartGame(MID string){
 								var mid1 string
 								row.Scan(&mid1)
 								bot.SendText([]string{mid1}, "現在開始遊戲-Texas")
-							}
-							row,_ := db.Query("SELECT MID FROM sql6131889.GameAction WHERE GameID = ? AND Cancel = ?", GID, 0)
-							for row.Next() {
-								var mid1 string
-								row.Scan(&mid1)
 								var cards [2]int
 								cards = GetTwoCards(mid1)
 								c1 := GetCardName(cards[0])
