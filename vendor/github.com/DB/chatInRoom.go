@@ -204,19 +204,7 @@ func runCall(mID string,text string,gID int,rID int,mT int,nextS int) {
 	var pN int//遊戲人數
 	db.QueryRow("SELECT PlayerNum FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&pN)
 	for i := 0;i < pN;i++ {
-		if i == pN - 1{ // one player left
-			db.Exec("UPDATE sql6131889.Game SET GameStatus = ? WHERE RoomID = ? AND Cancel = ?",12,gID, 0)
-			row,_ := db.Query("SELECT MID FROM sql6131889.GameAction WHERE GameID = ? AND Cancel = ?", gID, 0)
-			for row.Next() {
-				var mid1 string
-				row.Scan(&mid1)
-				if mid1 != mID{
-					var n string
-					db.QueryRow("SELECT UserName FROM sql6131889.User WHERE MID = ?",mID).Scan(&n)
-					bot.SendText([]string{mid1}, n+" WIN")
-				}
-			}
-		}
+
 		nextS += 1
 		if nextS > pN {
 			nextS = 1
@@ -234,6 +222,19 @@ func runCall(mID string,text string,gID int,rID int,mT int,nextS int) {
 }
 //棄牌
 func runFold(mID string,text string,gID int,mT int,nextS int){
+	// 	if i == pN - 1{ // one player left
+	// 	db.Exec("UPDATE sql6131889.Game SET GameStatus = ? WHERE RoomID = ? AND Cancel = ?",12,gID, 0)
+	// 	row,_ := db.Query("SELECT MID FROM sql6131889.GameAction WHERE GameID = ? AND Cancel = ?", gID, 0)
+	// 	for row.Next() {
+	// 		var mid1 string
+	// 		row.Scan(&mid1)
+	// 		if mid1 != mID{
+	// 			var n string
+	// 			db.QueryRow("SELECT UserName FROM sql6131889.User WHERE MID = ?",mID).Scan(&n)
+	// 			bot.SendText([]string{mid1}, n+" WIN")
+	// 		}
+	// 	}
+	// }
 	strID := os.Getenv("ChannelID")
 	numID, _ := strconv.ParseInt(strID, 10, 64) // string to integer
 	bot, _ = linebot.NewClient(numID, os.Getenv("ChannelSecret"), os.Getenv("MID"))
