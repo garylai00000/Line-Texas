@@ -40,7 +40,7 @@ func Management(mID string, text string) { // if playing call this func
 	var uR string
 	db.QueryRow("SELECT UserRoom FROM sql6131889.User WHERE MID = ?",mID).Scan(&uR)
 	var rid int
-	db.QueryRow("SELECT ID FROM sql6131889.Room WHERE RoomName = ? AND Cancel = ?", uR).Scan(&rid)
+	db.QueryRow("SELECT ID FROM sql6131889.Room WHERE RoomName = ? AND Cancel = ?", uR, 0).Scan(&rid)
 	var S int
 	db.QueryRow("SELECT GameStatus FROM sql6131889.Game WHERE RoomID = ? AND Cancel = ?",rid, 0).Scan(&S)
 	var gID int//輸入者在玩的GAMEID
