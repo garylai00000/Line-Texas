@@ -156,11 +156,9 @@ func InRoomStartGame(MID string){
 								bot.SendText([]string{mid1}, "您的手牌為：\n" + c1 + "\n" + c2)
 							}
 							var st int
-							db.QueryRow("SELECT Start FROM sql6131889.Game WHERE GameID = ? AND Cancel = ?",GID, 0).Scan(&st)
+							db.QueryRow("SELECT Start FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",GID, 0).Scan(&st)
 							var p1 string
 							db.QueryRow("SELECT MID FROM sql6131889.GameAction WHERE PlayerX = ? AND GameID = ? AND Cancel = ?", st, GID, 0).Scan(&p1)
-							s := strconv.Itoa(st)
-							bot.SendText([]string{MID}, p1+" "+s)
 							bot.SendText([]string{p1}, "系統: 跟注金額 5$\n請選擇指令 !Call")
 						}else{
 							bot.SendText([]string{MID}, "the game can't start below 2 player")
