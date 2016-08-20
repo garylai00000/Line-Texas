@@ -187,20 +187,20 @@ func runCall(mID string,text string,gID int,rID int,mT int,nextS int) {
 	
 	AddPlayerToken(mID,(-1)*mT)
 	AddGameToken(rID,mT)
-	db.Exec("UPDATE sql6131889.Game SET Turn = ? WHERE RoomId = ?",nextS,gID)
-	db.Exec("UPDATE sql6131889.GameAction SET Action = ? WHERE MID = ?",mT,mID)
-	row,_ := db.Query("SELECT MID FROM sql6131889.GameAction WHERE GameID = ?", gID)
+	db.Exec("UPDATE sql6131889.Game SET Turn = ? WHERE RoomId = ? AND Cancel = ?",nextS,gID, 0)
+	db.Exec("UPDATE sql6131889.GameAction SET Action = ? WHERE MID = ? AND Cancel = ?",mT,mID, 0)
+	row,_ := db.Query("SELECT MID FROM sql6131889.GameAction WHERE GameID = ? AND Cancel = ?", gID, 0)
 	for row.Next() {
 		var mid1 string
 		row.Scan(&mid1)
 		if mid1 != mID{
 			var n string
-			db.QueryRow("SELECT UserName FROM sql6131889.GameAction WHERE MID = ?",mID).Scan(&n)
+			db.QueryRow("SELECT UserName FROM sql6131889.GameAction WHERE MID = ? AND Cancel = ?",mID, 0).Scan(&n)
 			bot.SendText([]string{mid1}, n+": 跟注")
 		}
 	}
 	var mid2 string
-	db.QueryRow("SELECT MID FROM sql6131889.GameAction WHERE PlayerX = ?",nextS).Scan(&mid2)
+	db.QueryRow("SELECT MID FROM sql6131889.GameAction WHERE PlayerX = ? AND Cancel = ? AND GameID = ?",nextS, 0, gID).Scan(&mid2)
 	bot.SendText([]string{mid2}, "系統: 跟注金額"+strconv.Itoa(mT)+" 請選擇指令\n!Call\n!Fold\n!Raise")
 }
 //棄牌
