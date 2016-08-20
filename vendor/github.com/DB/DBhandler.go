@@ -59,7 +59,7 @@ func NewTwoCards(MID string) [2]int{
 	cards := [2]int{-1, -1}
 	db,_ := sql.Open("mysql", os.Getenv("dbacc")+":"+os.Getenv("dbpass")+"@tcp("+os.Getenv("dbserver")+")/")
 	db.QueryRow("SELECT GameID, PlayerCard1, PlayerCard2 FROM sql6131889.GameAction WHERE MID = ? and Cancel = 0", MID ).Scan(&GameID, &card1, &card2)
-	if PlayerCard1 != 0{
+	if card1 != 0{
 		//db.QueryRow("名字 FROM GameAction, 撲克牌參照表 WHERE MID = ? and PlayerCard1 = 編號", MID ).Scan(&card1name)
 		//db.QueryRow("名字 FROM GameAction, 撲克牌參照表 WHERE MID = ? and PlayerCard2 = 編號", MID ).Scan(&card2name)
 		rand.Seed(time.Now().UTC().UnixNano())
@@ -86,7 +86,7 @@ func NewFiveCards(GameID int) [5]int{
 	tablecards := [5]int{-1, -1, -1, -1, -1}
 	i := 0
 	for i < 5{
-		cards[i] = 1 + rand.Intn(52)
+		tablecards[i] = 1 + rand.Intn(52)
 		i = i + 1
 	}
 	db.Exec("UPDATE sql6131889.Game SET Card1 = ?, Card2 = ?, Card3 = ?, Card4 = ?, Card5 = ? WHERE ID = GameID", tablecards[0], tablecards[1], tablecards[2], tablecards[3], tablecards[4])
@@ -96,7 +96,8 @@ func NewFiveCards(GameID int) [5]int{
 //回傳目前牌桌的牌
 func GetFiveCards(GameID int) [5]int{
 	db,_ := sql.Open("mysql", os.Getenv("dbacc")+":"+os.Getenv("dbpass")+"@tcp("+os.Getenv("dbserver")+")/")
-	db.QueryRow("SELECT Card1, Card2, Card3, Card4, Card5 FROM sql6131889.Game WHERE ID = GameID", MID ).Scan(&tablecards[0], &tablecards[1], &tablecards[2], &tablecards[3], &tablecards[4])
+	tablecards := [5]int{-1, -1, -1, -1, -1}
+	db.QueryRow("SELECT Card1, Card2, Card3, Card4, Card5 FROM sql6131889.Game WHERE ID = ?", GameID ).Scan(&tablecards[0], &tablecards[1], &tablecards[2], &tablecards[3], &tablecards[4])
 	return tablecards
 }
 
