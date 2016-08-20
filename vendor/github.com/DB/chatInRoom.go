@@ -91,7 +91,7 @@ func callToken1(mID string, text string,S int) bool{
 	var rID int//在的房間ID
 	db.QueryRow("SELECT ID FROM sql6131889.Room WHERE RoomName = ? AND Cancel = ?",uR, 0).Scan(&rID)
 	var gID int//輸入者在玩的GAMEID
-	db.QueryRow("SELECT GameID FROM sql6131889.Game WHERE RoomID = ? AND Cancel = ?",rID, 0).Scan(&gID)
+	db.QueryRow("SELECT ID FROM sql6131889.Game WHERE RoomID = ? AND Cancel = ?",rID, 0).Scan(&gID)
 	var tN int//GAME的狀態turn
 	db.QueryRow("SELECT Turn FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&tN)
 	var money int = 5//money 小盲柱
