@@ -88,19 +88,19 @@ func callToken1(mID string, text string,S int) bool{
 	var uR string//在的房間name
 	db.QueryRow("SELECT UserRoom FROM sql6131889.User WHERE MID = ?",mID).Scan(&uR)
 	var rID int//在的房間ID
-	db.QueryRow("SELECT ID FROM sql6131889.room WHERE RoomName = ?",uR).Scan(&rID)
+	db.QueryRow("SELECT ID FROM sql6131889.Room WHERE RoomName = ? AND Cancel = ?",uR, 0).Scan(&rID)
 	var gID int//輸入者在玩的GAMEID
-	db.QueryRow("SELECT GameID FROM sql6131889.Game WHERE RoomId = ?",rID).Scan(&gID)
+	db.QueryRow("SELECT GameID FROM sql6131889.Game WHERE RoomId = ? AND Cancel = ?",rID, 0).Scan(&gID)
 	var tN int//GAME的狀態turn
-	db.QueryRow("SELECT Turn FROM sql6131889.Game WHERE ID = ?",gID).Scan(&tN)
+	db.QueryRow("SELECT Turn FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&tN)
 	var money int = 5//money 小盲柱
 	var P int//輸入者的身分
-	db.QueryRow("SELECT PlayerX FROME sql6131889.GameAction WHERE MID?",mID).Scan(&P)
+	db.QueryRow("SELECT PlayerX FROME sql6131889.GameAction WHERE MID AND Cancel = ??",mID, 0).Scan(&P)
 	//row,_ := db.Query("SELECT MID FROM sql6131889.GameAction WHERE GameID = ?", gID)
 	var mT int//最高投注金額
-	db.QueryRow("SELECT MaxToken FROM sql6131889.Game WHERE ID = ?",gID).Scan(&mT)
+	db.QueryRow("SELECT MaxToken FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&mT)
 	var pN int//遊戲人數
-	db.QueryRow("SELECT PlayerNum FROM sql6131889.Game WHERE ID = ?",gID).Scan(&pN)
+	db.QueryRow("SELECT PlayerNum FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&pN)
 	mT = money
 	if P == tN{
 		if S == 4{
