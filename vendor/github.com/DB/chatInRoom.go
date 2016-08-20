@@ -146,6 +146,8 @@ func runOne (mID string,text string,gID int,rID int,mT int,nextS int) {
 			
 		}else if text == "!Bet"{
 			runBet(mID,text,gID,rID,mT,nextS)
+		}else if text == "!See"{
+			See(mID, gID)
 		}else{//聊天
 			chatInRoom(mID,gID,text)
 		}
@@ -386,4 +388,27 @@ func setbetprize(mID string,text string, gID int){
 	db.Close()
 }
 
+func See(mID string, gID int){
+	strID := os.Getenv("ChannelID")
+	numID, _ := strconv.ParseInt(strID, 10, 64) // string to integer
+	bot, _ = linebot.NewClient(numID, os.Getenv("ChannelSecret"), os.Getenv("MID"))
+	db,_ := sql.Open("mysql", os.Getenv("dbacc")+":"+os.Getenv("dbpass")+"@tcp("+os.Getenv("dbserver")+")/")
+	var card1 int
+	var card2 int
+	var card3 int
+	var card4 int
+	var card5 int
+	db.QueryRow("SELECT Card1 Card2 Card3 Card4 Card5 FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&card1, &card2, &card3, &card4, &card5)
+	cn1 := GetCardName(card1)
+	cn2 := GetCardName(card2)
+	cn3 := GetCardName(card3)
+	cn4 := GetCardName(card4)
+	cn5 := GetCardName(card5)
+	bot.SendText([]string{mID}, "牌桌上的牌:\n"+cn1+"\n"+cn2+"\n"+cn3+"\n"+cn4+"\n"+cn5)
+	db.QueryRow("SELECT PlayerCard1 PlayerCard2 FROM sql6131889.GameAction WHERE MID = ? AND Cancel = ?",mID, 0).Scan(&card1, &card2)
+	cn1 = GetCardName(card1)
+	cn2 = GetCardName(card2)
+	bot.SendText([]string{mID}, "您的手牌:\n"+cn1+"\n"+cn2)
+	db.Close()
+}
 
