@@ -158,7 +158,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 						var playerInGame string
 						db.QueryRow("SELECT MID FROM sql6131889.GameAction WHERE MID = ? AND Cancel = ?", content.From, 0).Scan(&playerInGame)
 						if playerInGame != "" { // playing
-
+							DB.Management(content.From, text.Text)
 						}else {
 							var R string
 							db.QueryRow("SELECT UserRoom FROM sql6131889.User WHERE MID = ?", content.From).Scan(&R)
@@ -172,15 +172,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 							}
 						}
 					}
-					var rn string
-					db.QueryRow("SELECT UserRoom FROM sql6131889.User WHERE MID = ?", content.From).Scan(&rn)
-					var rid int
-					db.QueryRow("SELECT ID FROM sql6131889.Room WHERE RoomName = ?", rn).Scan(&rid)
-					var gs int
-					db.QueryRow("SELECT GameStatus FROM sql6131889.Game WHERE RoomID = ?", rid).Scan(&gs) 
-					if gs>=2{
-						DB.Management(content.From, text.Text)
-					}
+					
 				}else if S == 400{
 					db.Exec("UPDATE sql6131889.User SET UserNickName = ? WHERE MID = ?", text.Text, content.From)
 					var temp string
