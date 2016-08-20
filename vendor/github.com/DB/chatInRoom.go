@@ -109,7 +109,8 @@ func callToken1(mID string, text string,S int) bool{
 	s4 := strconv.Itoa(P)
 	s5 := strconv.Itoa(mT)
 	s6 := strconv.Itoa(pN)
-	bot.SendText([]string{mID}, uR+" "+s1+" "+s2+" "+s3+" "+s4+" "+s5+" "+s6)
+	s7 := strconv.Itoa(money)
+	bot.SendText([]string{mID}, uR+" "+s1+" "+s2+" "+s3+" "+s4+" "+s5+" "+s6+" "+s7)
 	if P == tN{
 		if S == 4{
 			bot.SendText([]string{mID}, "4444")
