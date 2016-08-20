@@ -96,16 +96,20 @@ func callToken1(mID string, text string,S int) bool{
 	db.QueryRow("SELECT Turn FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&tN)
 	var money int = 5//money 小盲柱
 	var P int//輸入者的身分
-	db.QueryRow("SELECT PlayerX FROM sql6131889.GameAction WHERE MID AND Cancel = ?",mID, 0).Scan(&P)
+	db.QueryRow("SELECT PlayerX FROM sql6131889.GameAction WHERE MID = ? AND Cancel = ?",mID, 0).Scan(&P)
 	//row,_ := db.Query("SELECT MID FROM sql6131889.GameAction WHERE GameID = ?", gID)
 	var mT int//最高投注金額
 	db.QueryRow("SELECT MaxToken FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&mT)
 	var pN int//遊戲人數
 	db.QueryRow("SELECT PlayerNum FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&pN)
-	mT = money
-	s2 := strconv.Itoa(P)
-	s1 := strconv.Itoa(tN)
-	bot.SendText([]string{mID}, s2+" "+s1)
+	//mT = money
+	s1 := strconv.Itoa(rID)
+	s2 := strconv.Itoa(gID)
+	s3 := strconv.Itoa(tN)
+	s4 := strconv.Itoa(P)
+	s5 := strconv.Itoa(mT)
+	s6 := strconv.Itoa(pN)
+	bot.SendText([]string{mID}, ur+" "+s1+" "+s2+" "+s3+" "+s4+" "+s5+" "+s6)
 	if P == tN{
 		if S == 4{
 			bot.SendText([]string{mID}, "4444")
