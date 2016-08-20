@@ -55,7 +55,7 @@ func InRoomJoinGame(MID string){
 	bot, _ = linebot.NewClient(numID, os.Getenv("ChannelSecret"), os.Getenv("MID"))
 	db,_ := sql.Open("mysql", os.Getenv("dbacc")+":"+os.Getenv("dbpass")+"@tcp("+os.Getenv("dbserver")+")/")
 	var R string
-	db.QueryRow("SELECT UserRoom FROM sql6131889.User WHERE MID = ? AND Cancel = ?", MID, 0).Scan(&R)
+	db.QueryRow("SELECT UserRoom FROM sql6131889.User WHERE MID = ?", MID).Scan(&R)
 	var RID int
 	db.QueryRow("SELECT ID FROM sql6131889.Room WHERE  RoomName = ? AND Cancel = ?", R,  0).Scan(&RID)
 	var GID int
@@ -81,9 +81,6 @@ func InRoomJoinGame(MID string){
 				db.Exec("UPDATE sql6131889.Game SET GamePlayer1 = ? WHERE ID = ? AND Cancel = ?", MID, GID, 0)
 				db.Exec("UPDATE sql6131889.GameAction SET PlayerX = ? WHERE MID = ? AND Cancel = ?", 1, MID, 0)
 				bot.SendText([]string{MID}, "You are Player1")
-				s1 := strconv.Itoa(GID)
-				s2 := strconv.Itoa(RID)
-				bot.SendText([]string{MID}, "\n"+s1+" "+s2+" "+R)
 			}else if nextPlayer == 2 {
 				db.Exec("UPDATE sql6131889.Game SET GamePlayer2 = ? WHERE ID = ? AND Cancel = ?", MID, GID, 0)
 				bot.SendText([]string{MID}, "You are Player2")
