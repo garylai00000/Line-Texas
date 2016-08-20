@@ -82,7 +82,7 @@ func Management(mID string, text string) { // if playing call this func
 		var md string
 		db.QueryRow("SELECT Template1 FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&md)
 		if md == mID {
-			setbetprize(mID,text,S)
+			setbetprize(mID,text, gID)
 		}else{
 			chatInRoom(mID,gID,text)
 		}
@@ -345,7 +345,7 @@ func runBet(mID string,text string,gID int,rID int,mT int,nextS int) {
 	db.Close()
 }
 
-func setbetprize(mID string,text string,S int){
+func setbetprize(mID string,text string, gID int){
 	strID := os.Getenv("ChannelID")
 	numID, _ := strconv.ParseInt(strID, 10, 64) // string to integer
 	bot, _ = linebot.NewClient(numID, os.Getenv("ChannelSecret"), os.Getenv("MID"))
