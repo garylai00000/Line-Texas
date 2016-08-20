@@ -142,7 +142,7 @@ func InRoomStartGame(MID string){
 						var gamerNum int
 						db.QueryRow("SELECT PlayerNum FROM sql6131889.Game WHERE ID = ?", GID).Scan(&gamerNum)
 						if gamerNum > 1 {
-							db.Exec("UPDATE sql6131889.Game SET GameStatus = ? WHERE ID = ? AND Cancel = ?", 2, GID, 0) //starting game now
+							db.Exec("UPDATE sql6131889.Game SET GameStatus = ? WHERE ID = ? AND Cancel = ?", 4, GID, 0) //starting game now
 							bot.SendText([]string{MID}, "== START THE GAME ==")
 							row,_ := db.Query("SELECT MID FROM sql6131889.GameAction WHERE GameID = ? AND Cancel = ?", GID, 0)
 							for row.Next() {
@@ -160,7 +160,6 @@ func InRoomStartGame(MID string){
 							var p1 string
 							db.QueryRow("SELECT MID FROM sql6131889.GameAction WHERE PlayerX = ? AND GameID = ? AND Cancel = ?", st, GID, 0).Scan(&p1)
 							bot.SendText([]string{p1}, "系統: 跟注金額 5$\n請選擇指令 !Call")
-							db.Exec("UPDATE sql6131889.Game SET GameStatus = ? WHERE RoomID = ? AND Cancel = ?", 4, GID, 0)
 						}else{
 							bot.SendText([]string{MID}, "the game can't start below 2 player")
 						}
