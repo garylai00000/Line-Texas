@@ -103,8 +103,12 @@ func callToken1(mID string, text string,S int) bool{
 	var pN int//遊戲人數
 	db.QueryRow("SELECT PlayerNum FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&pN)
 	mT = money
+	s2 := strconv.Itoa(P)
+	s1 := strconv.Itoa(tN)
+	bot.SendText([]string{mID}, s2+" "+s1)
 	if P == tN{
 		if S == 4{
+			bot.SendText([]string{mID}, "4444")
 			runOne(mID,text,gID,rID,mT,(tN+1)%pN)
 		}else if S>4{
 			runTwo(mID,text,gID,rID,mT,(tN+1)%pN)
