@@ -76,6 +76,16 @@ func Management(mID string, text string) { // if playing call this func
 		}
 	}else if S == 11{//輸贏+分錢
 
+	}else if S == 12{
+
+	}else if S == 200{
+		var md string
+		db.QueryRow("SELECT Template1 FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&md)
+		if md == mID {
+			setbetprize(mID,text,S)
+		}else{
+			chatInRoom(mID,gID,text)
+		}
 	}
 	db.Close()
 }
@@ -136,6 +146,8 @@ func runOne (mID string,text string,gID int,rID int,mT int,nextS int) {
 		}else if text == "!Raise"{
 			runRaise(mID,text,gID,rID,mT,nextS)
 			
+		}else if text == "!Bet"{
+			runBet(mID,text,gID,rID,mT,nextS)
 		}else{//聊天
 			chatInRoom(mID,gID,text)
 		}
@@ -317,6 +329,43 @@ func runRaise(mID string,text string,gID int,rID int,mT int,nextS int) {
 	var mid2 string
 	db.QueryRow("SELECT MID FROM sql6131889.GameAction WHERE PlayerX = ?",nextS).Scan(&mid2)
 	bot.SendText([]string{mid2}, "系統: 跟注金額"+strconv.Itoa(mT)+" 請選擇指令\n!Call\n!Fold\n!Raise")
+}
+
+func runBet(mID string,text string,gID int,rID int,mT int,nextS int) {
+	strID := os.Getenv("ChannelID")
+	numID, _ := strconv.ParseInt(strID, 10, 64) // string to integer
+	bot, _ = linebot.NewClient(numID, os.Getenv("ChannelSecret"), os.Getenv("MID"))
+	db,_ := sql.Open("mysql", os.Getenv("dbacc")+":"+os.Getenv("dbpass")+"@tcp("+os.Getenv("dbserver")+")/")
+	db.Exec("UPDATE sql6131889.Game SET GameStatus = ? WHERE ID = ? AND Cancel = ?",200, gID, 0) // GameStatus = 200
+	db.Exec("UPDATE sql6131889.Game SET Template1 = ? WHERE ID = ? AND Cancel = ?", mID, gID, 0)
+	var S int
+	db.QueryRow("SELECT GameStatus FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&S)
+	db.Exec("UPDATE sql6131889.Game SET Template2 = ? WHERE ID = ? AND Cancel = ?", S, gID, 0)
+	bot.SendText([]string{mID}, "請輸入金額:")
+	db.Close()
+}
+
+func setbetprize(mID string,text string,S int){
+	strID := os.Getenv("ChannelID")
+	numID, _ := strconv.ParseInt(strID, 10, 64) // string to integer
+	bot, _ = linebot.NewClient(numID, os.Getenv("ChannelSecret"), os.Getenv("MID"))
+	db,_ := sql.Open("mysql", os.Getenv("dbacc")+":"+os.Getenv("dbpass")+"@tcp("+os.Getenv("dbserver")+")/")
+	prize , _ := strconv.Atoi(text)
+	db.Exec("UPDATE sql6131889.GameAction SET Action = ? WHERE MID = ? AND Cancel = ?", prize, mID, 0)
+	var S int
+	db.QueryRow("SELECT Template2 FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&S)
+	db.Exec("UPDATE sql6131889.Game SET GameStatus = ? WHERE ID = ? AND Cancel = ?", S, gID, 0)
+	row,_ := db.Query("SELECT MID FROM sql6131889.GameAction WHERE GameID = ? AND Cancel = ?", gID, 0)
+	for row.Next() {
+		var mid1 string
+		row.Scan(&mid1)
+		if mid1 != mID{
+			var n string
+			db.QueryRow("SELECT UserName FROM sql6131889.User WHERE MID = ?",mID).Scan(&n)
+			bot.SendText([]string{mid1}, n+" 下注 $"+text)
+		}
+	}
+	db.Close()
 }
 
 
