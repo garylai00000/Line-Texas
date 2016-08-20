@@ -83,7 +83,6 @@ func Management(mID string, text string) { // if playing call this func
 
 //第一輪加注
 func callToken1(mID string, text string,S int) bool{
-	bot.SendText([]string{mID}, "calltk1")
 	// every function needs to open db again
 	db,_ := sql.Open("mysql", os.Getenv("dbacc")+":"+os.Getenv("dbpass")+"@tcp("+os.Getenv("dbserver")+")/")
 	var uR string//在的房間name
@@ -102,21 +101,17 @@ func callToken1(mID string, text string,S int) bool{
 	db.QueryRow("SELECT MaxToken FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&mT)
 	var pN int//遊戲人數
 	db.QueryRow("SELECT PlayerNum FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&pN)
-	//mT = money
-	s1 := strconv.Itoa(rID)
-	s2 := strconv.Itoa(gID)
-	s3 := strconv.Itoa(tN)
-	s4 := strconv.Itoa(P)
-	s5 := strconv.Itoa(mT)
-	s6 := strconv.Itoa(pN)
-	s7 := strconv.Itoa(money)
-	bot.SendText([]string{mID}, uR+" "+s1+" "+s2+" "+s3+" "+s4+" "+s5+" "+s6+" "+s7)
+	mT = money
 	if P == tN{
+		tN += 1
+		if tN > pN {
+			tN = 1
+		}
 		if S == 4{
 			bot.SendText([]string{mID}, "4444")
-			runOne(mID,text,gID,rID,mT,(tN+1)%pN)
+			runOne(mID,text,gID,rID,mT,tN)
 		}else if S>4{
-			runTwo(mID,text,gID,rID,mT,(tN+1)%pN)
+			runTwo(mID,text,gID,rID,mT,tN)
 		}
 	}else{
 		chatInRoom(mID,gID,text)
@@ -136,7 +131,6 @@ func callToken1(mID string, text string,S int) bool{
 
 
 func runOne (mID string,text string,gID int,rID int,mT int,nextS int) {
-	bot.SendText([]string{mID}, "ro")
 	//db,_ := sql.Open("mysql", os.Getenv("dbacc")+":"+os.Getenv("dbpass")+"@tcp("+os.Getenv("dbserver")+")/")
 		if text == "!Call"{
 			runCall(mID,text,gID,rID,mT,nextS)
@@ -191,7 +185,6 @@ func runTwo (mID string,text string,gID int,rID int,mT int,nextS int) {
 
 //跟注
 func runCall(mID string,text string,gID int,rID int,mT int,nextS int) {
-	bot.SendText([]string{mID}, "rC")
 	strID := os.Getenv("ChannelID")
 	numID, _ := strconv.ParseInt(strID, 10, 64) // string to integer
 	bot, _ = linebot.NewClient(numID, os.Getenv("ChannelSecret"), os.Getenv("MID"))
