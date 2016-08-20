@@ -201,7 +201,6 @@ func runCall(mID string,text string,gID int,rID int,mT int,nextS int) {
 			bot.SendText([]string{mid1}, n+": 跟注")
 		}
 	}
-	nextS
 	var pN int//遊戲人數
 	db.QueryRow("SELECT PlayerNum FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&pN)
 	for i := 0;i < pN;i++ {
