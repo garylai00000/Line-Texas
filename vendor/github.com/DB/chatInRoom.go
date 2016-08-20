@@ -186,7 +186,7 @@ func runCall(mID string,text string,gID int,rID int,mT int,nextS int) {
 	db,_ := sql.Open("mysql", os.Getenv("dbacc")+":"+os.Getenv("dbpass")+"@tcp("+os.Getenv("dbserver")+")/")
 	var act int
 	db.QueryRow("SELECT Action FROM sql6131889.GameAction WHERE MID = ? AND Cancel = ?",mID, 0).Scan(&act)
-	AddPlayerToken(mID,(-1)*(mT - act)))
+	AddPlayerToken(mID,(-1)*(mT - act))
 	AddGameToken(rID,mT - act)
 	db.Exec("UPDATE sql6131889.GameAction SET Action = ? WHERE MID = ? AND Cancel = ?",mT,mID, 0)
 
