@@ -214,6 +214,7 @@ func runCall(mID string,text string,gID int,rID int,mT int,nextS int) {
 	var mid2 string
 	db.QueryRow("SELECT MID FROM sql6131889.GameAction WHERE PlayerX = ? AND Cancel = ? AND GameID = ?",nextS, 0, gID).Scan(&mid2)
 	bot.SendText([]string{mid2}, "系統: 跟注金額"+strconv.Itoa(mT)+" 請選擇指令\n!Call\n!Fold\n!Raise")
+	db.Exec("UPDATE sql6131889.Game SET Turn = ? WHERE ID = ? AND Cancel = ?",nextS,gID, 0)
 }
 //棄牌
 func runFold(mID string,text string,gID int,mT int,nextS int){
