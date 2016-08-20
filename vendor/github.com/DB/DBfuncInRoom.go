@@ -132,7 +132,7 @@ func InRoomStartGame(MID string){
 	db.QueryRow("SELECT ID FROM sql6131889.Game WHERE RoomID = ? AND Cancel = ?", RID, 0).Scan(&GID)
 	var playerInGame string
 	db.QueryRow("SELECT MID FROM sql6131889.GameAction WHERE MID = ? AND Cancel = ?", MID, 0).Scan(&playerInGame)
-	db.QueryRow("SELECT RoomStatus FROM sql6131889.Room WHERE RoomName = ?,  AND Cancel = ?", R, 0).Scan(&haveGame)
+	db.QueryRow("SELECT RoomStatus FROM sql6131889.Room WHERE RoomName = ?  AND Cancel = ?", R, 0).Scan(&haveGame)
 	if haveGame == 101 {
 		if playerInGame != ""{
 			if true{
