@@ -58,24 +58,19 @@ func InRoomJoinGame(MID string){
 	var RID string
 	var R string
 	var GID string
-	db.QueryRow("SELECT UserRoom FROM sql6131889.User WHERE MID = ?", MID).Scan(&R)
-	db.QueryRow("SELECT ID FROM sql6131889.Room WHERE  RoomName = ?", R).Scan(&RID)
-	db.QueryRow("SELECT ID FROM sql6131889.Game WHERE RoomID = ?", RID).Scan(&GID)
-	db.QueryRow("SELECT RoomStatus FROM sql6131889.Room WHERE RoomName = ?", R).Scan(&haveGame)
+	db.QueryRow("SELECT UserRoom FROM sql6131889.User WHERE MID = ? AND Cancel = ?", MID, 0).Scan(&R)
+	db.QueryRow("SELECT ID FROM sql6131889.Room WHERE  RoomName = ? AND Cancel = ?", R,  0).Scan(&RID)
+	db.QueryRow("SELECT ID FROM sql6131889.Game WHERE RoomID = ? AND Cancel = ?", RID, 0).Scan(&GID)
+	db.QueryRow("SELECT RoomStatus FROM sql6131889.Room WHERE RoomName = ? AND Cancel = ?", R, 0).Scan(&haveGame)
 	if haveGame == 100 {
 		bot.SendText([]string{MID}, "Please build a new game use !newgame")
 	}else{
 		var playerInGame string
-		db.QueryRow("SELECT MID FROM sql6131889.GameAction WHERE MID = ?", MID).Scan(&playerInGame)
+		db.QueryRow("SELECT MID FROM sql6131889.GameAction WHERE MID = ? AND Cancel = ?", MID, 0).Scan(&playerInGame)
 		var nextPlayer int
-		var gameActionCancel int
-		db.QueryRow("SELECT Cancel FROM sql6131889.GameAction WHERE MID = ?", MID).Scan(&gameActionCancel)
-		row,_ := db.Query("SELECT Cancel FROM sql6131889.GameAction WHERE MID = ?", MID)
-		for row.Next() { 
-			row.Scan(&playerInGame)
-		}
-		if playerInGame == "" || gameActionCancel == 0{
-			db.QueryRow("SELECT PlayerNum FROM sql6131889.Game WHERE ID = ?", GID).Scan(&nextPlayer)
+		
+		if playerInGame == "" {
+			db.QueryRow("SELECT PlayerNum FROM sql6131889.Game WHERE ID = ? AND Cancel = ?", GID, 0).Scan(&nextPlayer)
 			nextPlayer = nextPlayer+1
 		}else{
 			nextPlayer = 50
@@ -83,38 +78,38 @@ func InRoomJoinGame(MID string){
 		if nextPlayer <= 10 {
 			db.Exec("INSERT INTO sql6131889.GameAction (MID, GameID, PlayerX, Action, Cancel) VALUES (?, ?, ?, ?, ?)", MID, GID, nextPlayer, 0, 0)
 			if nextPlayer == 1 {
-				db.Exec("UPDATE sql6131889.Game SET GamePlayer1 = ? WHERE ID = ?", MID, GID)
-				db.Exec("UPDATE sql6131889.GameAction SET PlayerX = ? WHERE MID = ?", 1, MID)
+				db.Exec("UPDATE sql6131889.Game SET GamePlayer1 = ? WHERE ID = ? AND Cancel = ?", MID, GID, 0)
+				db.Exec("UPDATE sql6131889.GameAction SET PlayerX = ? WHERE MID = ? AND Cancel = ?", 1, MID, 0)
 				bot.SendText([]string{MID}, "You are Player1")
 			}else if nextPlayer == 2 {
-				db.Exec("UPDATE sql6131889.Game SET GamePlayer2 = ? WHERE ID = ?", MID, GID)
+				db.Exec("UPDATE sql6131889.Game SET GamePlayer2 = ? WHERE ID = ? AND Cancel = ?", MID, GID, 0)
 				bot.SendText([]string{MID}, "You are Player2")
 			}else if nextPlayer == 3 {
-				db.Exec("UPDATE sql6131889.Game SET GamePlayer3 = ? WHERE ID = ?", MID, GID)
+				db.Exec("UPDATE sql6131889.Game SET GamePlayer3 = ? WHERE ID = ? AND Cancel = ?", MID, GID, 0)
 				bot.SendText([]string{MID}, "You are Player3")
 			}else if nextPlayer == 4 {
-				db.Exec("UPDATE sql6131889.Game SET GamePlayer4 = ? WHERE ID = ?", MID, GID)
+				db.Exec("UPDATE sql6131889.Game SET GamePlayer4 = ? WHERE ID = ? AND Cancel = ?", MID, GID, 0)
 				bot.SendText([]string{MID}, "You are Player4")
 			}else if nextPlayer == 5 {
-				db.Exec("UPDATE sql6131889.Game SET GamePlayer5 = ? WHERE ID = ?", MID, GID)
+				db.Exec("UPDATE sql6131889.Game SET GamePlayer5 = ? WHERE ID = ? AND Cancel = ?", MID, GID, 0)
 				bot.SendText([]string{MID}, "You are Player5")
 			}else if nextPlayer == 6 {
-				db.Exec("UPDATE sql6131889.Game SET GamePlayer6 = ? WHERE ID = ?", MID, GID)
+				db.Exec("UPDATE sql6131889.Game SET GamePlayer6 = ? WHERE ID = ? AND Cancel = ?", MID, GID, 0)
 				bot.SendText([]string{MID}, "You are Player6")
 			}else if nextPlayer == 7 {
-				db.Exec("UPDATE sql6131889.Game SET GamePlayer7 = ? WHERE ID = ?", MID, GID)
+				db.Exec("UPDATE sql6131889.Game SET GamePlayer7 = ? WHERE ID = ? AND Cancel = ?", MID, GID, 0)
 				bot.SendText([]string{MID}, "You are Player7")
 			}else if nextPlayer == 8 {
-				db.Exec("UPDATE sql6131889.Game SET GamePlayer8 = ? WHERE ID = ?", MID, GID)
+				db.Exec("UPDATE sql6131889.Game SET GamePlayer8 = ? WHERE ID = ? AND Cancel = ?", MID, GID, 0)
 				bot.SendText([]string{MID}, "You are Player8")
 			}else if nextPlayer == 9 {
-				db.Exec("UPDATE sql6131889.Game SET GamePlayer9 = ? WHERE ID = ?", MID, GID)
+				db.Exec("UPDATE sql6131889.Game SET GamePlayer9 = ? WHERE ID = ? AND Cancel = ?", MID, GID, 0)
 				bot.SendText([]string{MID}, "You are Player9")
 			}else if nextPlayer == 10 {
-				db.Exec("UPDATE sql6131889.Game SET GamePlayer10 = ? WHERE ID = ?", MID, GID)
+				db.Exec("UPDATE sql6131889.Game SET GamePlayer10 = ? WHERE ID = ? AND Cancel = ?", MID, GID, 0)
 				bot.SendText([]string{MID}, "You are Player10")
 			}
-			db.Exec("UPDATE sql6131889.Game SET PlayerNum = ? WHERE ID = ?", nextPlayer, GID)
+			db.Exec("UPDATE sql6131889.Game SET PlayerNum = ? WHERE ID = ? AND Cancel = ?", nextPlayer, GID, 0)
 		}else if nextPlayer == 50 {
 			bot.SendText([]string{MID}, "You are playing game now!!")
 		}else{
