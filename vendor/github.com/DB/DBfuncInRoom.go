@@ -81,6 +81,9 @@ func InRoomJoinGame(MID string){
 				db.Exec("UPDATE sql6131889.Game SET GamePlayer1 = ? WHERE ID = ? AND Cancel = ?", MID, GID, 0)
 				db.Exec("UPDATE sql6131889.GameAction SET PlayerX = ? WHERE MID = ? AND Cancel = ?", 1, MID, 0)
 				bot.SendText([]string{MID}, "You are Player1")
+				s1 := strconv.Itoa(GID)
+				s2 := strconv.Itoa(RID)
+				bot.SendText([]string{MID}, "\n"+s1+" "+s2)
 			}else if nextPlayer == 2 {
 				db.Exec("UPDATE sql6131889.Game SET GamePlayer2 = ? WHERE ID = ? AND Cancel = ?", MID, GID, 0)
 				bot.SendText([]string{MID}, "You are Player2")
