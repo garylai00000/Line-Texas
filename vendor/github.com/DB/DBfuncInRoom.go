@@ -144,6 +144,28 @@ func InRoomStartGame(MID string){
 						if gamerNum > 1 {
 							db.Exec("UPDATE sql6131889.Game SET GameStatus = ? WHERE ID = ? AND Cancel = ?", 2, GID, 0) //starting game now
 							bot.SendText([]string{MID}, "== START THE GAME ==")
+							row,_ := db.Query("SELECT MID FROM sql6131889.GameAction WHERE GameID = ? AND Cancel = ?", GID, 0)
+							for row.Next() {
+								var mid1 string
+								row.Scan(&mid1)
+								bot.SendText([]string{mid1}, "現在開始遊戲-Texas")
+							}
+							row,_ := db.Query("SELECT MID FROM sql6131889.GameAction WHERE GameID = ? AND Cancel = ?", GID, 0)
+							for row.Next() {
+								var mid1 string
+								row.Scan(&mid1)
+								var cards [2]int
+								cards = GetTwoCards(mid1)
+								c1 := GetCardName(cards[0])
+								c2 := GetCardName(cards[1])
+								bot.SendText([]string{mid1}, "您的手牌為：\n" + c1 + "\n" + c2)
+							}
+							var st int
+							db.QueryRow("SELECT Start FROM sql6131889.Game WHERE GameID = ? AND Cancel = ?",GID, 0).Scan(&st)
+							var p1 string
+							db.QueryRow("SELECT MID FROM sql6131889.GameAction WHERE PlayerX = ?AND GameID = ? AND Cancel = ?", st, GID, 0).Scan(&p1)
+							bot.SendText([]string{p1}, "系統: 跟注金額 5$\n請選擇指令 !Call")
+							db.Exec("UPDATE sql6131889.Game SET GameStatus = ? WHERE RoomId = ? AND Cancel = ?",4,GID, 0)
 						}else{
 							bot.SendText([]string{MID}, "the game can't start below 2 player")
 						}

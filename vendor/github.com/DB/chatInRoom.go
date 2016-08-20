@@ -40,61 +40,39 @@ func Management(mID string, text string) { // if playing call this func
 	var uR string
 	db.QueryRow("SELECT UserRoom FROM sql6131889.User WHERE MID = ?",mID).Scan(&uR)
 	var rid int
-	db.QueryRow("SELECT ID FROM sql6131889.Room WHERE RoomName = ?", uR).Scan(&rid)
+	db.QueryRow("SELECT ID FROM sql6131889.Room WHERE RoomName = ? AND Cancel = ?", uR).Scan(&rid)
 	var S int
-	db.QueryRow("SELECT GameStatus FROM sql6131889.Game WHERE RoomId = ?",rid).Scan(&S)
+	db.QueryRow("SELECT GameStatus FROM sql6131889.Game WHERE RoomId = ? AND Cancel = ?",rid, 0).Scan(&S)
 	var gID int//輸入者在玩的GAMEID
-	db.QueryRow("SELECT GameID FROM sql6131889.GameAction WHERE MID = ?",mID).Scan(&gID)
+	db.QueryRow("SELECT GameID FROM sql6131889.GameAction WHERE MID = ? AND Cancel = ?",mID, 0).Scan(&gID)
 	if S == 1{//等人
 		chatInRoom(mID,gID,text)
 	}else if S == 2{//開始Game
-		row,_ := db.Query("SELECT MID FROM sql6131889.GameAction WHERE GameID = ?", gID)
-		for row.Next() {
-			var mid1 string
-			row.Scan(&mid1)
-			bot.SendText([]string{mid1}, "現在開始遊戲-Texas")
-		}
-		db.Exec("UPDATE sql6131889.Game SET GameStatus = ? WHERE RoomId = ?",3,gID)
-		S=3
+		
 	}
 	if S == 3{//發牌=一人2張
-		row,_ := db.Query("SELECT MID FROM sql6131889.GameAction WHERE GameID = ?", gID)
-		i:=0
-		for row.Next() {
-			i++
-			var mid1 string
-			row.Scan(&mid1)
-			var cards [2]int
-			cards = GetTwoCards(mid1)
-			c1 := GetCardName(cards[0])
-			c2 := GetCardName(cards[1])
-			bot.SendText([]string{mid1}, "您的手牌為：\n" + c1 + "\n" + c2+strconv.Itoa(i))
-		}
-		var p1 string
-		db.QueryRow("SELECT MID FROM sql6131889.GameAction WHERE PlayerX = ?AND GameID = ?",1,gID).Scan(&p1)
-		bot.SendText([]string{p1}, "系統: 跟注金額 5$\n請選擇指令 !Call")
-		db.Exec("UPDATE sql6131889.Game SET GameStatus = ? WHERE RoomId = ?",4,gID)
+		
 	}else if S == 4{//第一輪下注
 		if callToken1(mID,text,S){
-			db.Exec("UPDATE sql6131889.Game SET GameStatus = ? WHERE RoomId = ?",5,gID)
+			db.Exec("UPDATE sql6131889.Game SET GameStatus = ? WHERE RoomId = ? AND Cancel = ?",5,gID, 0)
 		}
 	}else if S == 5{//發牌=檯面3張
 
 	}else if S == 6{//第二輪下注
 		if callToken1(mID,text,S){
-			db.Exec("UPDATE sql6131889.Game SET GameStatus = ? WHERE RoomId = ?",7,gID)
+			db.Exec("UPDATE sql6131889.Game SET GameStatus = ? WHERE RoomId = ? AND Cancel = ?",7,gID, 0)
 		}
 	}else if S == 7{//發牌=檯面4張
 
 	}else if S == 8{//第三輪下注
 		if callToken1(mID,text,S){
-			db.Exec("UPDATE sql6131889.Game SET GameStatus = ? WHERE RoomId = ?",9,gID)
+			db.Exec("UPDATE sql6131889.Game SET GameStatus = ? WHERE RoomId = ? AND Cancel = ?",9,gID, 0)
 		}
 	}else if S == 9{//發牌=檯面5張
 
 	}else if S == 10{//第四輪下注
 		if callToken1(mID,text,S){
-		db.Exec("UPDATE sql6131889.Game SET GameStatus = ? WHERE RoomId = ?",11,gID)
+		db.Exec("UPDATE sql6131889.Game SET GameStatus = ? WHERE RoomId = ? AND Cancel = ?",11,gID, 0)
 		}
 	}else if S == 11{//輸贏+分錢
 
