@@ -240,6 +240,8 @@ func runFold(mID string,text string,gID int,mT int,nextS int){
 		}
 	}
 	counts := 0
+	var pN int//遊戲人數
+	db.QueryRow("SELECT PlayerNum FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&pN)
 	var winner int
 	for i := 1;i <= pN;i++ {
 		var act int
