@@ -82,7 +82,7 @@ func Management(mID string, text string) { // if playing call this func
 
 //第一輪加注
 func callToken1(mID string, text string,S int) bool{
-
+	bot.SendText([]string{mID}, "calltk1")
 	// every function needs to open db again
 	db,_ := sql.Open("mysql", os.Getenv("dbacc")+":"+os.Getenv("dbpass")+"@tcp("+os.Getenv("dbserver")+")/")
 	var uR string//在的房間name
@@ -126,6 +126,7 @@ func callToken1(mID string, text string,S int) bool{
 
 
 func runOne (mID string,text string,gID int,rID int,mT int,nextS int) {
+	bot.SendText([]string{mID}, "ro")
 	//db,_ := sql.Open("mysql", os.Getenv("dbacc")+":"+os.Getenv("dbpass")+"@tcp("+os.Getenv("dbserver")+")/")
 		if text == "!Call"{
 			runCall(mID,text,gID,rID,mT,nextS)
@@ -180,6 +181,7 @@ func runTwo (mID string,text string,gID int,rID int,mT int,nextS int) {
 
 //跟注
 func runCall(mID string,text string,gID int,rID int,mT int,nextS int) {
+	bot.SendText([]string{mID}, "rC")
 	strID := os.Getenv("ChannelID")
 	numID, _ := strconv.ParseInt(strID, 10, 64) // string to integer
 	bot, _ = linebot.NewClient(numID, os.Getenv("ChannelSecret"), os.Getenv("MID"))
