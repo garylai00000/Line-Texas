@@ -46,7 +46,7 @@ func Management(mID string, text string) { // if playing call this func
 	var gID int//輸入者在玩的GAMEID
 	db.QueryRow("SELECT GameID FROM sql6131889.GameAction WHERE MID = ?",mID).Scan(&gID)
 	if S == 1{//等人
-		chatInRoom(mID,gID,t)
+		chatInRoom(mID,gID,text)
 	}else if S == 2{//開始Game
 		row,_ := db.Query("SELECT MID FROM sql6131889.GameAction WHERE GameID = ?", gID)
 		for row.Next() {
