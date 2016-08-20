@@ -398,14 +398,14 @@ func See(mID string, gID int){
 	var card3 int
 	var card4 int
 	var card5 int
-	db.QueryRow("SELECT Card1 Card2 Card3 Card4 Card5 FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&card1, &card2, &card3, &card4, &card5)
+	db.QueryRow("SELECT Card1, Card2, Card3, Card4, Card5 FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&card1, &card2, &card3, &card4, &card5)
 	cn1 := GetCardName(card1)
 	cn2 := GetCardName(card2)
 	cn3 := GetCardName(card3)
 	cn4 := GetCardName(card4)
 	cn5 := GetCardName(card5)
 	bot.SendText([]string{mID}, "牌桌上的牌:\n"+cn1+"\n"+cn2+"\n"+cn3+"\n"+cn4+"\n"+cn5)
-	db.QueryRow("SELECT PlayerCard1 PlayerCard2 FROM sql6131889.GameAction WHERE MID = ? AND Cancel = ?",mID, 0).Scan(&card1, &card2)
+	db.QueryRow("SELECT PlayerCard1, PlayerCard2 FROM sql6131889.GameAction WHERE MID = ? AND Cancel = ?",mID, 0).Scan(&card1, &card2)
 	cn1 = GetCardName(card1)
 	cn2 = GetCardName(card2)
 	bot.SendText([]string{mID}, "您的手牌:\n"+cn1+"\n"+cn2)
