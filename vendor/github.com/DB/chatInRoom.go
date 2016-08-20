@@ -23,7 +23,7 @@ func chatInRoom(mID string,gID int,t string) {
 		row.Scan(&mid1)
 		if mid1 != mID{
 			var n string
-			db.QueryRow("SELECT UserName FROM sql6131889.User WHERE MID = ? AND Cancel = ?",mID, 0).Scan(&n)
+			db.QueryRow("SELECT UserName FROM sql6131889.User WHERE MID = ?",mID).Scan(&n)
 			bot.SendText([]string{mid1}, n+":\n"+t)
 		}
 	}
