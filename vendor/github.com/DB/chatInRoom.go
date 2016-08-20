@@ -17,13 +17,13 @@ func chatInRoom(mID string,gID int,t string) {
 	numID, _ := strconv.ParseInt(strID, 10, 64) // string to integer
 	bot, _ = linebot.NewClient(numID, os.Getenv("ChannelSecret"), os.Getenv("MID"))
 	db,_ := sql.Open("mysql", os.Getenv("dbacc")+":"+os.Getenv("dbpass")+"@tcp("+os.Getenv("dbserver")+")/")
-	row,_ := db.Query("SELECT MID FROM sql6131889.GameAction WHERE GameID = ?", gID)
+	row,_ := db.Query("SELECT MID FROM sql6131889.GameAction WHERE GameID = ? AND Cancel = ?", gID, 0)
 	for row.Next() {
 		var mid1 string
 		row.Scan(&mid1)
 		if mid1 != mID{
 			var n string
-			db.QueryRow("SELECT UserName FROM sql6131889.User WHERE MID = ?",mID).Scan(&n)
+			db.QueryRow("SELECT UserName FROM sql6131889.User WHERE MID = ? AND Cancel = ?",mID, 0).Scan(&n)
 			bot.SendText([]string{mid1}, n+":\n"+t)
 		}
 	}
