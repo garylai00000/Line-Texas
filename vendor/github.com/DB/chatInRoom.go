@@ -53,6 +53,7 @@ func Management(mID string, text string) { // if playing call this func
 	if S == 3{//發牌=一人2張
 		
 	}else if S == 4{//第一輪下注
+		bot.SendText([]string{mID}, "S4")
 		if callToken1(mID,text,S){
 			db.Exec("UPDATE sql6131889.Game SET GameStatus = ? WHERE RoomId = ? AND Cancel = ?",5,gID, 0)
 		}
