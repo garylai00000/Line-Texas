@@ -210,7 +210,7 @@ func runCall(mID string,text string,gID int,rID int,mT int,nextS int) {
 			nextS = 1
 		}
 		var act int
-		db.QueryRow("SELECT Action FROM sql6131889.GameAction WHERE GameID = ? AND PlayerX = ? Cancel = ?",gID, nextS, 0).Scan(&act)
+		db.QueryRow("SELECT Action FROM sql6131889.GameAction WHERE GameID = ? AND PlayerX = ? AND Cancel = ?",gID, nextS, 0).Scan(&act)
 		if act != -1 {
 			break
 		}
