@@ -298,7 +298,7 @@ func runFold(mID string,text string,gID int,mT int,nextS int){
 		db.Exec("UPDATE sql6131889.Game SET Turn = ? WHERE ID = ? AND Cancel = ?",nextS,gID, 0)
 		var mid2 string
 		db.QueryRow("SELECT MID FROM sql6131889.GameAction WHERE PlayerX = ? AND Cancel = ? AND GameID = ?",nextS, 0, gID).Scan(&mid2)
-		bot.SendText([]string{mid2}, "目前下注金額 $"+strconv.Itoa(mT)+" 請選擇指令\n!Bet\n!Check\n!Call\n!Raise\n!Fold")
+		bot.SendText([]string{mid2}, "目前下注金額 $"+strconv.Itoa(mT)+" 請選擇指令\n!See\n!Bet\n!Check\n!Call\n!Raise\n!Fold")
 	}
 
 	
@@ -384,7 +384,7 @@ func setbetprize(mID string,text string, gID int){
 	db.Exec("UPDATE sql6131889.Game SET Turn = ? WHERE ID = ? AND Cancel = ?",nextS,gID, 0)
 	var mid2 string
 	db.QueryRow("SELECT MID FROM sql6131889.GameAction WHERE PlayerX = ? AND Cancel = ? AND GameID = ?",nextS, 0, gID).Scan(&mid2)
-	bot.SendText([]string{mid2}, "目前下注金額 $"+text+" 請選擇指令\n!Bet\n!Check\n!Call\n!Raise\n!Fold")
+	bot.SendText([]string{mid2}, "目前下注金額 $"+text+" 請選擇指令\n!See\n!Bet\n!Check\n!Call\n!Raise\n!Fold")
 	db.Close()
 }
 
@@ -409,6 +409,10 @@ func See(mID string, gID int){
 	cn1 = GetCardName(card1)
 	cn2 = GetCardName(card2)
 	bot.SendText([]string{mID}, "您的手牌:\n"+cn1+"\n"+cn2)
+	var mT int//最高投注金額
+	db.QueryRow("SELECT MaxToken FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&mT)
+	prize := strconv.Itoa(mT)
+	bot.SendText([]string{mID}, "目前下注金額 $"+prize+" 請選擇指令\n!See\n!Bet\n!Check\n!Call\n!Raise\n!Fold")
 	db.Close()
 }
 
