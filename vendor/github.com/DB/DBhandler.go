@@ -45,7 +45,7 @@ func GetTwoCards(MID string) [2]int{
 		card1 = 1 + rand.Intn(52)
 		card2 = 1 + rand.Intn(52)
 		cards = [2]int{card1, card2}
-		db.Exec("INSERT INTO sql6131889.GameAction (ID, MID, GameID, PlayerX, Action, PlayerCard1, Cancel, PlayerCard2)VALUES (?, ?, ?, ?, ?, ?, ?, ?)", 123, MID, 321, 11, 2, card1, 0, card2)
+		b.Exec("UPDATE sql6131889.GameAction SET PlayerCard1 = ? AND PlayerCard2 = ? WHERE MID = ? AND Cancel = ?", card1, card2, MID, 0) 
 	}
 	return cards
 }
