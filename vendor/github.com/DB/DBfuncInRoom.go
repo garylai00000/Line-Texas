@@ -55,9 +55,9 @@ func InRoomJoinGame(MID string){
 	bot, _ = linebot.NewClient(numID, os.Getenv("ChannelSecret"), os.Getenv("MID"))
 	db,_ := sql.Open("mysql", os.Getenv("dbacc")+":"+os.Getenv("dbpass")+"@tcp("+os.Getenv("dbserver")+")/")
 	var haveGame int
-	var RID string
+	var RID int
 	var R string
-	var GID string
+	var GID int
 	db.QueryRow("SELECT UserRoom FROM sql6131889.User WHERE MID = ? AND Cancel = ?", MID, 0).Scan(&R)
 	db.QueryRow("SELECT ID FROM sql6131889.Room WHERE  RoomName = ? AND Cancel = ?", R,  0).Scan(&RID)
 	db.QueryRow("SELECT ID FROM sql6131889.Game WHERE RoomID = ? AND Cancel = ?", RID, 0).Scan(&GID)
