@@ -53,7 +53,6 @@ func Management(mID string, text string) { // if playing call this func
 	if S == 3{//發牌=一人2張
 		
 	}else if S == 4{//第一輪下注
-		bot.SendText([]string{mID}, "S4")
 		if callToken1(mID,text,S){
 			db.Exec("UPDATE sql6131889.Game SET GameStatus = ? WHERE RoomID = ? AND Cancel = ?",5,gID, 0)
 		}
@@ -102,13 +101,9 @@ func callToken1(mID string, text string,S int) bool{
 	var pN int//遊戲人數
 	db.QueryRow("SELECT PlayerNum FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&pN)
 	mT = money
+	db.Exec("UPDATE sql6131889.Game SET MaxToken = ? WHERE ID = ?", mT, gID)
 	if P == tN{
-		tN += 1
-		if tN > pN {
-			tN = 1
-		}
 		if S == 4{
-			bot.SendText([]string{mID}, "4444")
 			runOne(mID,text,gID,rID,mT,tN)
 		}else if S>4{
 			runTwo(mID,text,gID,rID,mT,tN)
@@ -189,11 +184,13 @@ func runCall(mID string,text string,gID int,rID int,mT int,nextS int) {
 	numID, _ := strconv.ParseInt(strID, 10, 64) // string to integer
 	bot, _ = linebot.NewClient(numID, os.Getenv("ChannelSecret"), os.Getenv("MID"))
 	db,_ := sql.Open("mysql", os.Getenv("dbacc")+":"+os.Getenv("dbpass")+"@tcp("+os.Getenv("dbserver")+")/")
-	
-	AddPlayerToken(mID,(-1)*mT)
-	AddGameToken(rID,mT)
-	db.Exec("UPDATE sql6131889.Game SET Turn = ? WHERE RoomID = ? AND Cancel = ?",nextS,gID, 0)
+	var act int
+	db.QueryRow("SELECT Action FROM sql6131889.GameAction WHERE MID = ? AND Cancel = ?",mID, 0).Scan(&act)
+	AddPlayerToken(mID,(-1)*(mT - act)))
+	AddGameToken(rID,mT - act)
 	db.Exec("UPDATE sql6131889.GameAction SET Action = ? WHERE MID = ? AND Cancel = ?",mT,mID, 0)
+
+	
 	row,_ := db.Query("SELECT MID FROM sql6131889.GameAction WHERE GameID = ? AND Cancel = ?", gID, 0)
 	for row.Next() {
 		var mid1 string
@@ -204,10 +201,37 @@ func runCall(mID string,text string,gID int,rID int,mT int,nextS int) {
 			bot.SendText([]string{mid1}, n+": 跟注")
 		}
 	}
+	nextS
+	var pN int//遊戲人數
+	db.QueryRow("SELECT PlayerNum FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&pN)
+	for i := 0;i < pN;i++ {
+		if i == pN - 1{ // one player left
+			db.Exec("UPDATE sql6131889.Game SET GameStatus = ? WHERE RoomID = ? AND Cancel = ?",12,gID, 0)
+			row,_ := db.Query("SELECT MID FROM sql6131889.GameAction WHERE GameID = ? AND Cancel = ?", gID, 0)
+			for row.Next() {
+				var mid1 string
+				row.Scan(&mid1)
+				if mid1 != mID{
+					var n string
+					db.QueryRow("SELECT UserName FROM sql6131889.User WHERE MID = ?",mID).Scan(&n)
+					bot.SendText([]string{mid1}, n+" WIN")
+				}
+			}
+		}
+		nextS += 1
+		if nextS > pN {
+			nextS = 1
+		}
+		var act int
+		db.QueryRow("SELECT Action FROM sql6131889.GameAction WHERE GameID = ? AND PlayerX = ? Cancel = ?",gID, nextS, 0).Scan(&act)
+		if act != -1 {
+			break
+		}
+	}
+	db.Exec("UPDATE sql6131889.Game SET Turn = ? WHERE ID = ? AND Cancel = ?",nextS,gID, 0)
 	var mid2 string
 	db.QueryRow("SELECT MID FROM sql6131889.GameAction WHERE PlayerX = ? AND Cancel = ? AND GameID = ?",nextS, 0, gID).Scan(&mid2)
 	bot.SendText([]string{mid2}, "系統: 跟注金額"+strconv.Itoa(mT)+" 請選擇指令\n!Call\n!Fold\n!Raise")
-	db.Exec("UPDATE sql6131889.Game SET Turn = ? WHERE ID = ? AND Cancel = ?",nextS,gID, 0)
 }
 //棄牌
 func runFold(mID string,text string,gID int,mT int,nextS int){
