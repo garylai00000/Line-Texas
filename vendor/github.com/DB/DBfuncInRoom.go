@@ -132,24 +132,22 @@ func InRoomStartGame(MID string){
 	var R string
 	var GID string
 	var haveGame int
-	db.QueryRow("SELECT UserRoom FROM sql6131889.User WHERE MID = ?", MID).Scan(&R)
-	db.QueryRow("SELECT ID FROM sql6131889.Room WHERE  RoomName = ?", R).Scan(&RID)
-	db.QueryRow("SELECT ID FROM sql6131889.Game WHERE RoomID = ?", RID).Scan(&GID)
+	db.QueryRow("SELECT UserRoom FROM sql6131889.User WHERE MID = ? AND Cancel = ?", MID, 0).Scan(&R)
+	db.QueryRow("SELECT ID FROM sql6131889.Room WHERE  RoomName = ? AND Cancel = ?", R, 0).Scan(&RID)
+	db.QueryRow("SELECT ID FROM sql6131889.Game WHERE RoomID = ? AND Cancel = ?", RID, 0).Scan(&GID)
 	var playerInGame string
-	db.QueryRow("SELECT MID FROM sql6131889.GameAction WHERE MID = ?", MID).Scan(&playerInGame)
-	db.QueryRow("SELECT RoomStatus FROM sql6131889.Room WHERE RoomName = ?", R).Scan(&haveGame)
+	db.QueryRow("SELECT MID FROM sql6131889.GameAction WHERE MID = ? AND Cancel = ?", MID, 0).Scan(&playerInGame)
+	db.QueryRow("SELECT RoomStatus FROM sql6131889.Room WHERE RoomName = ?,  AND Cancel = ?", R, 0).Scan(&haveGame)
 	if haveGame == 101 {
 		if playerInGame != ""{
-			var gameActionCancel int
-			db.QueryRow("SELECT MID FROM sql6131889.GameAction WHERE MID = ?", MID).Scan(&gameActionCancel)
-			if gameActionCancel != 1{
+			if true{
 					var waitingForStart int
-					db.QueryRow("SELECT GameStatus FROM sql6131889.Game WHERE ID = ?", GID).Scan(&waitingForStart)
+					db.QueryRow("SELECT GameStatus FROM sql6131889.Game WHERE ID = ? AND Cancel = ?", GID, 0).Scan(&waitingForStart)
 					if waitingForStart == 1 {
 						var gamerNum int
 						db.QueryRow("SELECT PlayerNum FROM sql6131889.Game WHERE ID = ?", GID).Scan(&gamerNum)
 						if gamerNum > 1 {
-							db.Exec("UPDATE sql6131889.Game SET GameStatus = ? WHERE ID = ?", 2, GID) //starting game now
+							db.Exec("UPDATE sql6131889.Game SET GameStatus = ? WHERE ID = ? AND Cancel = ?", 2, GID, 0) //starting game now
 							bot.SendText([]string{MID}, "== START THE GAME ==")
 						}else{
 							bot.SendText([]string{MID}, "the game can't start below 2 player")
