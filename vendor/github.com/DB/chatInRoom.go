@@ -365,22 +365,24 @@ func setbetprize(mID string,text string, gID int){
 	}
 	bot.SendText([]string{mID}, "你下注 $"+text)
 	var pN int//遊戲人數
-		db.QueryRow("SELECT PlayerNum FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&pN)
-		for i := 0;i < pN;i++ {
-			nextS += 1
-			if nextS > pN {
-				nextS = 1
-			}
-			var act int
-			db.QueryRow("SELECT Action FROM sql6131889.GameAction WHERE GameID = ? AND PlayerX = ? AND Cancel = ?",gID, nextS, 0).Scan(&act)
-			if act != -1 {
-				break
-			}
+	db.QueryRow("SELECT PlayerNum FROM sql6131889.Game WHERE ID = ? AND Cancel = ?",gID, 0).Scan(&pN)
+	var nextS int
+	db.QueryRow("SELECT PlayerX FROM sql6131889.GameAction WHERE MID = ? AND Cancel = ?",mID, 0).Scan(&nextS)
+	for i := 0;i < pN;i++ {
+		nextS += 1
+		if nextS > pN {
+			nextS = 1
 		}
-		db.Exec("UPDATE sql6131889.Game SET Turn = ? WHERE ID = ? AND Cancel = ?",nextS,gID, 0)
-		var mid2 string
-		db.QueryRow("SELECT MID FROM sql6131889.GameAction WHERE PlayerX = ? AND Cancel = ? AND GameID = ?",nextS, 0, gID).Scan(&mid2)
-		bot.SendText([]string{mid2}, "目前下注金額 $"+text+" 請選擇指令\n!Bet\n!Check\n!Call\n!Raise\n!Fold")
+		var act int
+		db.QueryRow("SELECT Action FROM sql6131889.GameAction WHERE GameID = ? AND PlayerX = ? AND Cancel = ?",gID, nextS, 0).Scan(&act)
+		if act != -1 {
+			break
+		}
+	}
+	db.Exec("UPDATE sql6131889.Game SET Turn = ? WHERE ID = ? AND Cancel = ?",nextS,gID, 0)
+	var mid2 string
+	db.QueryRow("SELECT MID FROM sql6131889.GameAction WHERE PlayerX = ? AND Cancel = ? AND GameID = ?",nextS, 0, gID).Scan(&mid2)
+	bot.SendText([]string{mid2}, "目前下注金額 $"+text+" 請選擇指令\n!Bet\n!Check\n!Call\n!Raise\n!Fold")
 	db.Close()
 }
 
