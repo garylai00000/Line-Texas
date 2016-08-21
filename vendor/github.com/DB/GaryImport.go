@@ -42,8 +42,8 @@ func BigCombi (mid string) ([4]int, [13]int){ // Biggest Combination
 	}
 	for i := 0;i < 4;i++{ // deck into suits and nums
 		for j:= 0;j < 13;j++{
-			suits[i] += cards[i][j]
-			nums[j] += cards[i][j]
+			suits[i] += deck[i][j]
+			nums[j] += deck[i][j]
 		}
 	}
 	db.Close()
